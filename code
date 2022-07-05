@@ -1,0 +1,21 @@
+#!pip install snscrape
+
+#installing social network scraper specifically for twitter
+import snscrape.modules.twitter as sntwitter
+import pandas as pd
+
+#-----------------------------------------------------------------------------#
+query='bolsonaro' #subject
+tweets = [] #lsit to be appended by tweets given a specfic theme
+limit = 1000
+
+#loop to get twitters
+for tweet in sntwitter.TwitterSearchScraper(query).get_items():
+    if len(tweets) == limit:
+        break
+    else:
+        tweets.append([tweet.date, tweet.user.username, tweet.content])
+        
+df = pd.DataFrame(tweets, columns=['Data', 'Users', 'Tweets'])
+
+df #sees tweets
