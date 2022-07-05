@@ -5,17 +5,18 @@ import snscrape.modules.twitter as sntwitter
 import pandas as pd
 
 #-----------------------------------------------------------------------------#
-query='bolsonaro' #subject
+query=input('Please, input a topic: ') #subject
+
 tweets = [] #lsit to be appended by tweets given a specfic theme
-limit = 1000
+limit = 100
 
 #loop to get twitters
 for tweet in sntwitter.TwitterSearchScraper(query).get_items():
     if len(tweets) == limit:
         break
     else:
-        tweets.append([tweet.date, tweet.user.username, tweet.content])
+        tweets.append([tweet.date, tweet.user.username, tweet.user.location, tweet.content, tweet.lang, tweet.likeCount])
         
-df = pd.DataFrame(tweets, columns=['Data', 'Users', 'Tweets'])
+df = pd.DataFrame(tweets, columns=['Data', 'Users', 'Location', 'Tweets', 'Language', 'Like Count'])
 
 df #sees tweets
