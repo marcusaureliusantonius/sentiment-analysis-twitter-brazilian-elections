@@ -20,3 +20,51 @@ for tweet in sntwitter.TwitterSearchScraper(query).get_items():
 df = pd.DataFrame(tweets, columns=['Data', 'Users', 'Location', 'Tweets', 'Language', 'Like Count'])
 
 df #sees tweets
+
+#-----------------------------------------------------------------------------#
+
+#Cleaning tweets
+
+def cleantxt(tweets):
+    tweets = re.sub(r'@[A-Za-z0-9]+', '', tweets) #Removed @mentions
+    tweets = re.sub(r'#', '', tweets) #Removing the '#' symbol
+    tweets = re.sub(r'RT[\s]+', '', tweets) #removing RT
+    tweets = re.sub(r'https?:\/\/\S+', '', tweets) #remove the hyper link
+    
+    return tweets
+
+df['Tweets'] = df['Tweets'].apply(cleantxt)
+
+#Translating tweets because the machine is only trained to know english)
+translator = GoogleTranslator(source='auto', target='en')
+def getTranslated(txt):
+    x[['Tweets']] = translator.translate(x[['Tweets']])
+    return txt
+
+df.index
+
+#---------------------------------------------------------------------------#
+
+def getSubjectivity(text):
+    return TextBlob(text).sentiment.subjectivity
+
+def getPolarity(text):
+    return TextBlob(text).sentiment.polarity
+
+df["Subjectivity"] = df['Tweets'].apply(getSubjectivity)
+
+df['Polarity'] = df['Tweets'].apply(getPolarity)
+
+#---------------------------------------------------------------------------#
+
+def analysis(score):
+    if score < 0:
+        return 'Negative'
+    elif score == 0:
+        return 'Neutral'
+    else:
+        return 'Positive'
+    
+df['Analysis'] = df['Polarity'].apply(analysis)
+
+df
