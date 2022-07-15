@@ -1,8 +1,11 @@
-#!pip install snscrape
-
-#installing social network scraper specifically for twitter
 import snscrape.modules.twitter as sntwitter
 import pandas as pd
+import numpy as np
+import re
+from deep_translator import GoogleTranslator
+from textblob import TextBlob
+import googletrans
+from googletrans import Translator
 
 #-----------------------------------------------------------------------------#
 query=input('Please, input a topic: ') #subject
@@ -35,13 +38,9 @@ def cleantxt(tweets):
 
 df['Tweets'] = df['Tweets'].apply(cleantxt)
 
-#Translating tweets because the machine is only trained to know english)
-translator = GoogleTranslator(source='auto', target='en')
-def getTranslated(txt):
-    x[['Tweets']] = translator.translate(x[['Tweets']])
-    return txt
+df['Translated_Tweets'] = df['Tweets'].apply(lambda x: translator.translate(x, src='auto', dest='en'))
 
-df.index
+df.info()
 
 #---------------------------------------------------------------------------#
 
@@ -51,9 +50,9 @@ def getSubjectivity(text):
 def getPolarity(text):
     return TextBlob(text).sentiment.polarity
 
-df["Subjectivity"] = df['Tweets'].apply(getSubjectivity)
+df["Subjectivity"] = df['Translated_Tweets'].apply(getSubjectivity)
 
-df['Polarity'] = df['Tweets'].apply(getPolarity)
+df['Polarity'] = df['Translated_Tweets'].apply(getPolarity)
 
 #---------------------------------------------------------------------------#
 
@@ -68,3 +67,7 @@ def analysis(score):
 df['Analysis'] = df['Polarity'].apply(analysis)
 
 df
+
+#---------------------------------------------------------------------------#
+
+df[["Analysis", "Data"]].groupby("Analysis").count()
